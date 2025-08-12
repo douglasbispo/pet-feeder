@@ -3,17 +3,16 @@
 #include "freertos/task.h"
 #include "esp_log.h"
 #include "driver/gpio.h"
-#include "servo_control.h"
 
-// Tag para logs
+#include "servo_control.h"
+#include "wifi_config.h"
+#include "mqtt_app.h"
+
 static const char *TAG = "PET_FEEDER";
 
-// Tempo de espera da tampa aberta em segundos
 #define TEMPO_ESPERA_SEGUNDOS 3
 
-// Pino GPIO
 #define BOTAO_PIN GPIO_NUM_14
-
 
 void aciona_alimentador_task(void *pvParameter) {
     ESP_LOGI(TAG, "Abrindo a tampa (movendo o servo para 180 graus).");
@@ -28,6 +27,7 @@ void aciona_alimentador_task(void *pvParameter) {
     vTaskDelete(NULL);
 }
 
+
 void app_main(void) {
     servo_init();
     servo_set_angle(0);
@@ -36,11 +36,17 @@ void app_main(void) {
     gpio_set_direction(BOTAO_PIN, GPIO_MODE_INPUT);
     gpio_set_pull_mode(BOTAO_PIN, GPIO_PULLUP_ONLY);
 
-    ESP_LOGI(TAG, "Alimentador de pets pronto. Pressione o botao para acionar.");
+    ESP_LOGI(TAG, "Iniciando Wi-Fi...");
+    wifi_init_sta();
+
+    ESP_LOGI(TAG, "Iniciando cliente MQTT...");
+    mqtt_app_start();
+
+    ESP_LOGI(TAG, "Alimentador de pets pronto. Aguardando comandos...");
 
     while(1) {
         if (gpio_get_level(BOTAO_PIN) == 0) {
-            ESP_LOGI(TAG, "Botao pressionado!");
+            ESP_LOGI(TAG, "Botao fisico pressionado!");
             
             vTaskDelay(pdMS_TO_TICKS(50));
             
