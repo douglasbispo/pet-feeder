@@ -2,38 +2,56 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_log.h"
-#include "servo_control.h" // arquivo de cabeçalho
+#include "driver/gpio.h"
+#include "servo_control.h"
 
 // Tag para logs
 static const char *TAG = "PET_FEEDER";
 
-// Tempo de espera em segundos para o servo fechar a tampa.
-#define TEMPO_ESPERA_SEGUNDOS 5
+// Tempo de espera da tampa aberta em segundos
+#define TEMPO_ESPERA_SEGUNDOS 3
+
+// Pino GPIO
+#define BOTAO_PIN GPIO_NUM_14
+
+
+void aciona_alimentador_task(void *pvParameter) {
+    ESP_LOGI(TAG, "Abrindo a tampa (movendo o servo para 180 graus).");
+    servo_set_angle(180);
+
+    ESP_LOGI(TAG, "Tampa aberta. Aguardando %d segundos...", TEMPO_ESPERA_SEGUNDOS);
+    vTaskDelay(pdMS_TO_TICKS(TEMPO_ESPERA_SEGUNDOS * 1000));
+
+    ESP_LOGI(TAG, "Fechando a tampa (movendo o servo para 0 graus).");
+    servo_set_angle(0);
+    
+    vTaskDelete(NULL);
+}
 
 void app_main(void) {
-    // Inicializa o controle do servo motor
     servo_init();
-
-    ESP_LOGI(TAG, "Alimentador de pets inicializado. Aguardando comando...");
-    
-    // Configura o servo para a posição inicial (tampa fechada)
     servo_set_angle(0);
 
+    gpio_reset_pin(BOTAO_PIN);
+    gpio_set_direction(BOTAO_PIN, GPIO_MODE_INPUT);
+    gpio_set_pull_mode(BOTAO_PIN, GPIO_PULLUP_ONLY);
+
+    ESP_LOGI(TAG, "Alimentador de pets pronto. Pressione o botao para acionar.");
+
     while(1) {
-        // Esta é a lógica de abrir e fechar a tampa
-        ESP_LOGI(TAG, "Abrindo a tampa (movendo o servo para 180 graus).");
-        // Abre a tampa (gira o servo 180 graus).
-        servo_set_angle(180);
-
-        // Espera o tempo determinado para a ração cair.
-        ESP_LOGI(TAG, "Tampa aberta. Aguardando %d segundos...", TEMPO_ESPERA_SEGUNDOS);
-        vTaskDelay(pdMS_TO_TICKS(TEMPO_ESPERA_SEGUNDOS * 1000));
-
-        // Fecha a tampa (gira o servo de volta para 0 graus).
-        ESP_LOGI(TAG, "Fechando a tampa (movendo o servo para 0 graus).");
-        servo_set_angle(0);
-        
-        ESP_LOGI(TAG, "Ciclo concluido. Aguardando 10 segundos para o próximo ciclo...");
-        vTaskDelay(pdMS_TO_TICKS(10000));
+        if (gpio_get_level(BOTAO_PIN) == 0) {
+            ESP_LOGI(TAG, "Botao pressionado!");
+            
+            vTaskDelay(pdMS_TO_TICKS(50));
+            
+            if (gpio_get_level(BOTAO_PIN) == 0) {
+                xTaskCreate(&aciona_alimentador_task, "aciona_alimentador", 2048, NULL, 5, NULL);
+                
+                while (gpio_get_level(BOTAO_PIN) == 0) {
+                    vTaskDelay(pdMS_TO_TICKS(50));
+                }
+            }
+        }
+        vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
