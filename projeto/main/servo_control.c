@@ -1,0 +1,45 @@
+#include "servo_control.h"
+#include "driver/ledc.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
+// Pino GPIO do servo
+#define SERVO_PIN 12
+
+// Configurações do PWM para o servo
+#define SERVO_LEDC_TIMER LEDC_TIMER_0
+#define SERVO_LEDC_MODE LEDC_LOW_SPEED_MODE
+#define SERVO_LEDC_CHANNEL LEDC_CHANNEL_0
+#define SERVO_LEDC_DUTY_RESOLUTION LEDC_TIMER_16_BIT
+#define SERVO_LEDC_FREQUENCY 50 // Frequência de 50Hz padrão
+
+void servo_init() {
+    // Configura o timer do LEDC
+    ledc_timer_config_t timer_conf = {
+        .speed_mode = SERVO_LEDC_MODE,
+        .duty_resolution = SERVO_LEDC_DUTY_RESOLUTION,
+        .timer_num = SERVO_LEDC_TIMER,
+        .freq_hz = SERVO_LEDC_FREQUENCY,
+        .clk_cfg = LEDC_AUTO_CLK
+    };
+    ledc_timer_config(&timer_conf);
+
+    // Configura o canal LEDC que irá gerar o sinal PWM
+    ledc_channel_config_t channel_conf = {
+        .speed_mode = SERVO_LEDC_MODE,
+        .channel = SERVO_LEDC_CHANNEL,
+        .timer_sel = SERVO_LEDC_TIMER,
+        .intr_type = LEDC_INTR_DISABLE,
+        .gpio_num = SERVO_PIN,
+        .duty = 0, // Começa com o duty cycle em 0.
+        .hpoint = 0
+    };
+    ledc_channel_config(&channel_conf);
+}
+
+void servo_set_angle(int angle) {
+    uint32_t duty = (angle * (5000) / 180) + 1634;
+
+    ledc_set_duty(SERVO_LEDC_MODE, SERVO_LEDC_CHANNEL, duty);
+    ledc_update_duty(SERVO_LEDC_MODE, SERVO_LEDC_CHANNEL);
+}
