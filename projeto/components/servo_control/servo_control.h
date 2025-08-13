@@ -5,4 +5,7 @@ void servo_init(void);
 
 void servo_set_angle(int angle);
 
+void led_on(); 
+void led_off();
+
 #endif

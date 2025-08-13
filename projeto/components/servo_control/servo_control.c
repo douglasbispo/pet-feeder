@@ -1,9 +1,10 @@
 #include "servo_control.h"
-#include "driver/ledc.h"   
+#include "driver/ledc.h"    
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
 #define SERVO_PIN 12
+#define LED_PIN GPIO_NUM_32
 #define SERVO_LEDC_TIMER LEDC_TIMER_0
 #define SERVO_LEDC_MODE LEDC_LOW_SPEED_MODE
 #define SERVO_LEDC_CHANNEL LEDC_CHANNEL_0
@@ -30,6 +31,10 @@ void servo_init() {
         .hpoint = 0
     };
     ledc_channel_config(&channel_conf);
+
+    gpio_reset_pin(LED_PIN);
+    gpio_set_direction(LED_PIN, GPIO_MODE_OUTPUT);
+    gpio_set_level(LED_PIN, 0);
 }
 
 void servo_set_angle(int angle) {
@@ -40,4 +45,12 @@ void servo_set_angle(int angle) {
     uint32_t duty = min + ( (uint64_t)(max - min) * angle ) / 180;
     ledc_set_duty(SERVO_LEDC_MODE, SERVO_LEDC_CHANNEL, duty);
     ledc_update_duty(SERVO_LEDC_MODE, SERVO_LEDC_CHANNEL);
+}
+
+void led_on() {
+    gpio_set_level(LED_PIN, 1);
+}
+
+void led_off() {
+    gpio_set_level(LED_PIN, 0);
 }

@@ -16,6 +16,7 @@ static const char *TAG = "PET_FEEDER";
 
 void aciona_alimentador_task(void *pvParameter) {
     ESP_LOGI(TAG, "Abrindo a tampa (movendo o servo para 180 graus).");
+    led_on();
     servo_set_angle(180);
 
     ESP_LOGI(TAG, "Tampa aberta. Aguardando %d segundos...", TEMPO_ESPERA_SEGUNDOS);
@@ -23,10 +24,11 @@ void aciona_alimentador_task(void *pvParameter) {
 
     ESP_LOGI(TAG, "Fechando a tampa (movendo o servo para 0 graus).");
     servo_set_angle(0);
+
+    led_off();
     
     vTaskDelete(NULL);
 }
-
 
 void app_main(void) {
     servo_init();
