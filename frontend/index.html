@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle do Alimentador de Pets</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Alimentador de Pets</h1>
+        
+        <div class="status-box">
+            <button id="toggleBtn" class="toggle-btn" onclick="toggleConnection()">Conectar</button>
+            <p>Status: <span id="statusText" class="status-disconnected">Desconectado</span></p>
+        </div>
+        
+        <div class="main-button-container">
+            <button id="feedBtn" class="feed-btn" onclick="acionarAlimentador()">
+                Acionar
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+
+    <script src="./js/script.js"></script>
+</body>
+</html>
