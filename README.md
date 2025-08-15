@@ -43,10 +43,10 @@ Para compilar e carregar o código para o ESP32, você precisará dos seguintes 
 
 ### 2\. Configuração do Ambiente
 
-1.  **Instale o ESP-IDF e a Extensão:** Siga a documentação oficial da [Extensão ESP-IDF para VS Code](https://www.google.com/search?q=https://github.com/espressif/vscode-esp-idf-extension%23installation). Certifique-se de escolher a **instalação padrão** ("Standard") para evitar problemas de configuração.
+1.  **Instale o ESP-IDF e a Extensão:** Siga a documentação oficial da [Extensão ESP-IDF para VS Code](https://www.google.com/search?q=https://github.com/espressif/vscode-esp-idf-extension%23installation).
 2.  **Clone o Repositório:** Abra o terminal (PowerShell, Git Bash, etc.) e clone este repositório para o seu computador.
     ```bash
-    git clone https://docs.github.com/articles/referencing-and-citing-content
+    git clone https://github.com/douglasbispo/pet-feeder
     ```
 
 ### 3\. Montagem do Circuito
