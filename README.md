@@ -20,19 +20,28 @@ O código foi organizado em módulos, facilitando a manutenção e a adição de
 
 -----
 
-# Como Executar o Projeto
+## Como Executar o Projeto
 
-## 1\. Ferramentas Necessárias
+### 1\. Ferramentas Necessárias
 
-Para compilar e carregar o código para o ESP32, você precisará das seguintes ferramentas:
+Para compilar e carregar o código para o ESP32, você precisará dos seguintes tens:
 
-  - **Visual Studio Code:** O editor de código.
-  - **Extensão ESP-IDF para VS Code:** A extensão oficial para desenvolvimento com ESP-IDF.
-  - **ESP-IDF (versão 5.4.1 ou superior):** O framework de desenvolvimento do ESP32.
-  - **Git:** Para clonar o repositório.
-  - **MQTT Explorer:** Um cliente MQTT de desktop para monitorar os tópicos.
+  - **Software:**
+    - **Visual Studio Code:** O editor de código.
+    - **Extensão ESP-IDF para VS Code:** A extensão oficial para desenvolvimento com ESP-IDF.
+    - **ESP-IDF (versão 5.4.1 ou superior):** O framework de desenvolvimento do ESP32.
+    - **Git:** Para clonar o repositório.
+    - **MQTT Explorer:** Um cliente MQTT de desktop para monitorar os tópicos.
+  - **Hardware:**
+    - 1x Placa de desenvolvimento ESP32
+    - 1x Servo Motor SG-5010
+    - 1x Botão de pressão
+    - 1x LED (qualquer cor)
+    - 1x Resistor de 330 Ω (ou 220 Ω)
+    - 1x Protoboard
+    - Cabos Jumper Macho-Macho
 
-## 2\. Configuração do Ambiente
+### 2\. Configuração do Ambiente
 
 1.  **Instale o ESP-IDF e a Extensão:** Siga a documentação oficial da [Extensão ESP-IDF para VS Code](https://www.google.com/search?q=https://github.com/espressif/vscode-esp-idf-extension%23installation). Certifique-se de escolher a **instalação padrão** ("Standard") para evitar problemas de configuração.
 2.  **Clone o Repositório:** Abra o terminal (PowerShell, Git Bash, etc.) e clone este repositório para o seu computador.
@@ -40,7 +49,7 @@ Para compilar e carregar o código para o ESP32, você precisará das seguintes 
     git clone https://docs.github.com/articles/referencing-and-citing-content
     ```
 
-## 3\. Montagem do Circuito
+### 3\. Montagem do Circuito
 
   - **Servo Motor (SG-5010):**
       - **Sinal (Laranja/Amarelo):** Conecte ao **GPIO 12** do ESP32.
@@ -53,7 +62,7 @@ Para compilar e carregar o código para o ESP32, você precisará das seguintes 
       - O terminal longo do LED, com um resistor de **330 Ω** em série, conecte ao **GPIO 32**.
       - O terminal curto do LED conecte ao **GND** do ESP32.
 
-## 4\. Configuração do Código
+### 4\. Configuração do Código
 
 1.  Abra o projeto no VS Code (`projeto` na pasta clonada).
 2.  Vá para a pasta `components/wifi_config/`.
@@ -67,11 +76,11 @@ Para compilar e carregar o código para o ESP32, você precisará das seguintes 
     #define MQTT_BROKER_URL "mqtt://broker.hivemq.com"
     ```
 
-## 5\. Compilar e Carregar para o ESP32
+### 5\. Compilar e Carregar para o ESP32
 
 Instrução sobre a porta COM e a forma de execução (terminal ou VS Code) eatão separadas em seções.
 
-### 5.1\. **Encontrando a Porta Serial (COM)**
+#### 5.1\. **Encontrando a Porta Serial (COM)**
 
 Primeiro, você precisa identificar a porta serial (COM) do seu ESP32. A forma mais fácil de fazer isso é no VS Code, no rodapé.
 
@@ -81,17 +90,17 @@ Primeiro, você precisa identificar a porta serial (COM) do seu ESP32. A forma m
 
 A porta selecionada aparecerá no rodapé do VS Code, confirmando que o ambiente está pronto.
 
-### 5.2\. **VS Code ou Terminal**
+#### 5.2\. **VS Code ou Terminal**
 
 Agora, você pode escolher se prefere usar os comandos do VS Code ou a linha de comando do terminal.
 
-#### 5.2.1\. **Opção 1: Pelo VS Code (Interface Gráfica)**
+##### **Opção 1: Pelo VS Code (Interface Gráfica)**
 
 1.  No **Command Palette** (`Ctrl + Shift + P`), execute o comando **`ESP-IDF: Full clean project`**.
 2.  Em seguida, execute **`ESP-IDF: Build, Flash and Start a Monitor on Your Device`**.
       * A extensão do VS Code irá compilar o projeto, carregar o código para a porta serial que você selecionou e, por fim, abrir o monitor serial para mostrar os logs do ESP32.
 
-#### 5.2.2\. **Opção 2: Pelo Terminal (Linha de Comando)**
+##### **Opção 2: Pelo Terminal (Linha de Comando)**
 
 1.  No **Command Palette** (`Ctrl + Shift + P`), execute o comando **`ESP-IDF: Open ESP-IDF Terminal`**.
 2.  Execute o comando `idf.py` com o parâmetro `fullclean`:
