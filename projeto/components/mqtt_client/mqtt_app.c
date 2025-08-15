@@ -8,10 +8,21 @@
 
 #define MQTT_BROKER_URL "mqtt://broker.hivemq.com"
 #define MQTT_TOPIC_COMANDO "pet_feeder/comando"
+#define MQTT_TOPIC_STATUS "pet_feeder/status"
 #define MQTT_COMANDO_ACIONAR "acionar"
 
 static const char *TAG = "MQTT_CLIENT";
+
 extern void aciona_alimentador_task(void *pvParameter);
+
+static esp_mqtt_client_handle_t client_handle;
+
+void mqtt_publish_status(const char* status_msg) {
+    if (client_handle) {
+        esp_mqtt_client_publish(client_handle, MQTT_TOPIC_STATUS, status_msg, 0, 1, 0);
+        ESP_LOGI(TAG, "Status publicado: %s", status_msg);
+    }
+}
 
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
     esp_mqtt_event_handle_t event = event_data;
@@ -28,6 +39,8 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
             if (client) {
                 esp_mqtt_client_subscribe(client, MQTT_TOPIC_COMANDO, 0);
             }
+
+            mqtt_publish_status("online");
             break;
 
         case MQTT_EVENT_DISCONNECTED:

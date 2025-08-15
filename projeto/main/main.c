@@ -10,14 +10,15 @@
 
 static const char *TAG = "PET_FEEDER";
 
-#define TEMPO_ESPERA_SEGUNDOS 3
+#define TEMPO_ESPERA_SEGUNDOS 1
 
 #define BOTAO_PIN GPIO_NUM_14
 
 void aciona_alimentador_task(void *pvParameter) {
-    ESP_LOGI(TAG, "Abrindo a tampa (movendo o servo para 180 graus).");
+    ESP_LOGI(TAG, "Abrindo a tampa (movendo o servo para 90 graus).");
     led_on();
-    servo_set_angle(180);
+    mqtt_publish_status("aberto");
+    servo_set_angle(90);
 
     ESP_LOGI(TAG, "Tampa aberta. Aguardando %d segundos...", TEMPO_ESPERA_SEGUNDOS);
     vTaskDelay(pdMS_TO_TICKS(TEMPO_ESPERA_SEGUNDOS * 1000));
@@ -26,6 +27,7 @@ void aciona_alimentador_task(void *pvParameter) {
     servo_set_angle(0);
 
     led_off();
+    mqtt_publish_status("fechado");
     
     vTaskDelete(NULL);
 }
